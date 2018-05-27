@@ -138,5 +138,5 @@ CREATE TABLE `type_small` (
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-insert  into `department` values (1,'蓝盾信息安全技术有限公司',NULL,NULL,NULL);
+insert  into `department` values (1,'xx信息安全技术有限公司',NULL,NULL,NULL);
 insert  into `employment` values (1,'superadmin','superadmin',NULL,NULL,NULL,NULL,'9',1,9,NULL,NULL,NULL,NULL);
