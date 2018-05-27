@@ -1,0 +1,289 @@
+<div ng-controller="reimburse.employmentCtl">
+    <div class="c-body-box">
+        <p class="c-line-title">人员管理</p>
+        <button type="button" class="btn btn-primary" style="float: right;margin-right: 19px;margin-bottom: 10px;" ng-click="openAddWindow();">添加人员</button>
+        <div class="c-datatable-box">
+            <table class="table table-bordered table-hover ">
+                <thead>
+                <tr>
+                    <!--<th class="text-center col-md-1">序号</th>-->
+                    <th class="text-center col-md-1">姓名</th>
+                    <th class="text-center col-md-1">工号</th>
+                    <th class="text-center col-md-1">部门</th>
+                    <th class="text-center col-md-1">类型</th>
+                    <!--<th class="text-center col-md-1">审批权限</th>-->
+                    <th class="text-center col-md-1">创建时间</th>
+                    <th class="text-center col-md-1">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in dataList">
+                    <!--<td class="text-center" ng-bind="$index+1"></td>-->
+                    <td class="text-center" ng-bind="item.name"></td>
+                    <td class="text-center" ng-bind="item.employmentId"></td>
+                    <td class="text-center" ng-bind="item.departmentName"></td>
+                    <td class="text-center">
+                        <span ng-if="item.type == 2">部门管理员</span>
+                        <span ng-if="item.type == 1">普通员工</span>
+                    </td>
+                  <!--  <td class="text-center">
+                        <span ng-if="item.permission == 1">有</span>
+                        <span ng-if="item.permission == 2">无</span>
+                    </td>-->
+                    <td class="text-center" ng-bind="item.createTime | date :'yyyy-MM-dd hh:mm:ss'"></td>
+                    <td class="text-center">
+                        <button class="btn  btn-info btn-sm" ng-click="openEditWindow(item)">编辑</button>
+                        <button class="btn  btn-info btn-sm" ng-click="deleteWindow(item.id)">删除</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <!--<div cjhme-data-pager options="dataTableConfig" receive="dataPagerReceive" search="dataPagerSearch"></div>-->
+        </div>
+    </div>
+</div>
+
+<script type="text/ng-template" id="add.html">
+    <div class="modal-header">
+        <h4 class="modal-title bold text-danger">添加人员</h4>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="employmentAddForm">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger">*</span> 姓名：</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control"  ng-model="data.name" name="employmentAddName"
+                               ng-maxlength="10" ng-required="true" ng-pattern="'^[a-zA-Z0-9\u4e00-\u9fa5]+$'">
+                        <div ng-if="employmentAddForm.employmentAddName.$dirty || employmentAddForm.$submitted" class="w650">
+                            <div class="check-result" ng-show="employmentAddForm.employmentAddName.$error.required">名称不能为空</div>
+                            <div class="check-result" ng-show="employmentAddForm.employmentAddName.$error.pattern">只能由中文、英文字母、数字组成</div>
+                            <div class="check-result" ng-show="employmentAddForm.employmentAddName.$error.maxlength">名称最大长度不能超过10个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger">*</span> 工号：</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control"  ng-model="data.employmentId" name="employmentAddEmploymentId"
+                               ng-maxlength="32" ng-required="true" ng-pattern="'^[a-zA-Z0-9]+$'">
+                        <div ng-if="employmentAddForm.employmentAddEmploymentId.$dirty || employmentAddForm.$submitted" class="w650">
+                            <div class="check-result" ng-show="employmentAddForm.employmentAddEmploymentId.$error.required">工号不能为空</div>
+                            <div class="check-result" ng-show="employmentAddForm.employmentAddEmploymentId.$error.pattern">只能由英文字母、数字组成</div>
+                            <div class="check-result" ng-show="employmentAddForm.employmentAddEmploymentId.$error.maxlength">工号最大长度不能超过32个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger">*</span> 部门：</label>
+                    <div class="col-md-9">
+                        <ui-select ng-model="data.departmentId" name="employmentAddDepartment" ng-required="true" >
+                            <ui-select-match placeholder="请选择类别">{{$select.selected.name}}</ui-select-match>
+                            <ui-select-choices repeat="item in deploymentList">
+                                <div ng-bind="item.name"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                        <div ng-if="employmentAddForm.employmentAddDepartment.$dirty || employmentAddForm.$submitted">
+                            <div class="check-result" ng-show="employmentAddForm.employmentAddDepartment.$error.required">部门不能为空</div>
+                            <!--<div class="check-result" ng-show="employmentAddForm.employmentAddEmploymentId.$error.pattern">只能由英文字母、数字组成</div>-->
+                            <!--<div class="check-result" ng-show="employmentAddForm.employmentAddEmploymentId.$error.maxlength">工号最大长度不能超过32个字符</div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger">*</span> 部门管理员：</label>
+                    <div class="col-md-9">
+                        <switch name="isAdmin" style="width:66px" ng-model="data.type"  ng-change="switchChange(isAdmin)" on="是" off="否"
+                               ></switch>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger"></span> 电话号码：</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control"  ng-model="data.telephone" name="employmentAddTelephone"
+                               ng-pattern="'^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\\d{8}$'">
+                        <div ng-if="employmentAddForm.employmentAddTelephone.$dirty || employmentAddForm.$submitted">
+                            <!--<div class="check-result" ng-show="employmentAddForm.employmentAddTelephone.$error.required">工号不能为空</div>-->
+                            <div class="check-result" ng-show="employmentAddForm.employmentAddTelephone.$error.pattern">请输入正确的电话号码</div>
+                            <!--<div class="check-result" ng-show="employmentAddForm.employmentAddTelephone.$error.maxlength">工号最大长度不能超过32个字符</div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger"></span> 住址：</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control"  ng-model="data.address" name="employmentAddAddress"
+                               ng-maxlength="128" >
+                        <div ng-if="employmentAddForm.employmentAddAddress.$dirty || employmentAddForm.$submitted" >
+                            <!--<div class="check-result" ng-show="employmentAddForm.employmentAddAddress.$error.required">工号不能为空</div>-->
+                            <!--<div class="check-result" ng-show="employmentAddForm.employmentAddAddress.$error.pattern">只能由中文、英文字母、数字、中划线、下划线组成</div>-->
+                            <div class="check-result" ng-show="employmentAddForm.employmentAddAddress.$error.maxlength">最大长度不能超过128个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<!--            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger">*</span> 审批权限：</label>
+                    <div class="col-md-9">
+                        <switch name="isPermission" style="width:66px" ng-model="data.permission"  ng-change="switchChange(data.permission)" on="有" off="无"></switch>
+                    </div>
+                </div>
+            </div>-->
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label">备注：</label>
+                    <div class="col-md-9">
+                        <textarea rows="3" class="form-control" placeholder="请输入备注" ng-model="data.description" name="employmentAddDescription"  ng-maxlength="128"></textarea>
+                        <div ng-if="employmentAddForm.employmentAddDescription.$dirty || employmentAddForm.$submitted" >
+                            <!--<div class="check-result" ng-show="employmentAddForm.employmentAddAddress.$error.required">工号不能为空</div>-->
+                            <!--<div class="check-result" ng-show="employmentAddForm.employmentAddAddress.$error.pattern">只能由中文、英文字母、数字、中划线、下划线组成</div>-->
+                            <div class="check-result" ng-show="employmentAddForm.employmentAddDescription.$error.maxlength">最大长度不能超过128个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="col-md-offset-1 col-md-10">
+                    <button type="button" class="btn btn-primary" ng-click="saveReq();" ng-disabled="!employmentAddForm.$valid"> 保存</button>&nbsp;
+                    <button type="button" class="btn btn-success" ng-click="cancel();">取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="edit.html">
+    <div class="modal-header">
+        <h4 class="modal-title bold text-danger">编辑人员</h4>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="employmentEditForm">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger">*</span> 姓名：</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control"  ng-model="editData.name" name="employmentEditName"
+                               ng-maxlength="10" ng-required="true" ng-pattern="'^[a-zA-Z0-9\u4e00-\u9fa5]+$'">
+                        <div ng-if="employmentEditForm.employmentEditName.$dirty || employmentEditForm.$submitted" class="w650">
+                            <div class="check-result" ng-show="employmentEditForm.employmentEditName.$error.required">名称不能为空</div>
+                            <div class="check-result" ng-show="employmentEditForm.employmentEditName.$error.pattern">只能由中文、英文字母、数字组成</div>
+                            <div class="check-result" ng-show="employmentEditForm.employmentEditName.$error.maxlength">名称最大长度不能超过10个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger">*</span> 工号：</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control"  ng-model="editData.employmentId" name="employmentEditEmploymentId"
+                               ng-maxlength="32" ng-required="true" ng-pattern="'^[a-zA-Z0-9]+$'">
+                        <div ng-if="employmentEditForm.employmentEditEmploymentId.$dirty || employmentEditForm.$submitted" >
+                            <div class="check-result" ng-show="employmentEditForm.employmentEditEmploymentId.$error.required">工号不能为空</div>
+                            <div class="check-result" ng-show="employmentEditForm.employmentEditEmploymentId.$error.pattern">只能由英文字母、数字组成</div>
+                            <div class="check-result" ng-show="employmentEditForm.employmentEditEmploymentId.$error.maxlength">工号最大长度不能超过32个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger">*</span> 部门：</label>
+                    <div class="col-md-9">
+                        <ui-select ng-model="editData.departmentId" name="employmentEditDepartment">
+                            <ui-select-match placeholder="请选择类别">{{$select.selected.name}}</ui-select-match>
+                            <ui-select-choices repeat="item in deploymentList">
+                                <div ng-bind="item.name"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                        <div ng-if="employmentEditForm.employmentEditDepartment.$dirty || employmentEditForm.$submitted">
+                            <div class="check-result" ng-show="employmentEditForm.employmentEditDepartment.$error.required">部门不能为空</div>
+                            <!--<div class="check-result" ng-show="employmentAddForm.employmentAddEmploymentId.$error.pattern">只能由英文字母、数字组成</div>-->
+                            <!--<div class="check-result" ng-show="employmentAddForm.employmentAddEmploymentId.$error.maxlength">工号最大长度不能超过32个字符</div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger">*</span> 部门管理员：</label>
+                    <div class="col-md-9">
+                        <switch name="isAdmin" style="width:66px" ng-model="isAdmin"  ng-change="switchChange(isAdmin)" on="是" off="否"
+                        ></switch>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger"></span> 电话号码：</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control"  ng-model="editData.telephone" name="employmentEditTelephone"
+                               ng-pattern="'^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\\d{8}$'">
+                        <div ng-if="employmentEditForm.employmentEditTelephone.$dirty || employmentEditForm.$submitted">
+                            <!--<div class="check-result" ng-show="employmentAddForm.employmentAddTelephone.$error.required">工号不能为空</div>-->
+                            <div class="check-result" ng-show="employmentEditForm.employmentEditTelephone.$error.pattern">请输入正确的电话号码</div>
+                            <!--<div class="check-result" ng-show="employmentAddForm.employmentAddTelephone.$error.maxlength">工号最大长度不能超过32个字符</div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger"></span> 住址：</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control"  ng-model="editData.address" name="employmentEditAddress"
+                               ng-maxlength="128" >
+                        <div ng-if="employmentEditForm.employmentEditAddress.$dirty || employmentEditForm.$submitted" >
+                            <!--<div class="check-result" ng-show="employmentAddForm.employmentAddAddress.$error.required">工号不能为空</div>-->
+                            <!--<div class="check-result" ng-show="employmentAddForm.employmentAddAddress.$error.pattern">只能由中文、英文字母、数字、中划线、下划线组成</div>-->
+                            <div class="check-result" ng-show="employmentEditForm.employmentEditAddress.$error.maxlength">最大长度不能超过128个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label">备注：</label>
+                    <div class="col-md-9">
+                        <textarea rows="3" class="form-control" placeholder="请输入备注" name="employmentEditDescription"  ng-maxlength="128"
+                                  ng-model="editData.description"></textarea>
+                        <div ng-if="employmentEditForm.employmentEditDescription.$dirty || employmentEditForm.$submitted" >
+                            <!--<div class="check-result" ng-show="employmentAddForm.employmentAddAddress.$error.required">工号不能为空</div>-->
+                            <!--<div class="check-result" ng-show="employmentAddForm.employmentAddAddress.$error.pattern">只能由中文、英文字母、数字、中划线、下划线组成</div>-->
+                            <div class="check-result" ng-show="employmentEditForm.employmentEditDescription.$error.maxlength">最大长度不能超过128个字符</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="col-md-offset-1 col-md-10">
+                    <button type="button" class="btn btn-primary" ng-click="editReq();" ng-disabled="!employmentEditForm.$valid"> 保存</button>&nbsp;
+                    <button type="button" class="btn btn-success" ng-click="cancel();">取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh" ng-app="cjhme" ng-controller="cjhme.indexCtrl">
+
+<head>
+	<meta charset="utf-8">
+	<title>reimburse</title>
+	<link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css" />
+	<link rel="stylesheet" href="lib/fontawesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="lib/animate/animate.min.css">
+	<link rel="stylesheet" href="lib/bootstrapDatePicker/css/bootstrap-datepicker.min.css">
+	<link rel="stylesheet" href="lib/bootstrapDatetimePicker/css/bootstrap-datetimepicker.min.css">
+	<link rel="stylesheet" href="lib/angularuiSwitch/css/angular-ui-switch.min.css">
+	<link rel="stylesheet" href="lib/angularuiSelect/css/select.min.css">
+	<link rel="stylesheet" href="lib/ueditor/themes/default/css/ueditor.min.css">
+
+<!--	<link rel="stylesheet" href="lib/layui/css/layui.css">-->
+
+	<!--<link rel="stylesheet" href="lib/layui/css/layui.css">-->
+
+	<link rel="stylesheet" href="css/custom.css" />
+	<link rel="stylesheet"  href="css/app.css"/>
+	<link rel="stylesheet"  href="css/mylaypage.css"/>
+	<link rel="stylesheet"  ng-href="css/{{theme}}.css"/>
+
+	<link type="image/x-icon" rel="shortcut icon" href="../favicon.ico" />
+
+	<script type="text/javascript">
+        var url = location.search; //获取url中"?"符后的字串 ('?modFlag=business&role=1')
+        if ( url.indexOf( "?" ) != -1 ) {
+            var str = url.substr( 1 ); //substr()方法返回从参数值开始到结束的字符串；
+            var userId = str.split( "=" )[1];
+
+            console.log( userId ); //此时的theRequest就是我们需要的参数；
+        }
+
+	</script>
+
+</head>
+
+<body>
+
+<div class="c-wrapper" page-resize>
+	<!--左边 -->
+	<aside   ng-style="hStyle" ng-class="{true:'left-wrapper-c',false:'left-wrapper'}[closeWrapper]" ng-include="'module/main/left.html'"></aside>
+	<!--右边 -->
+	<section ng-style="hStyle" ng-class="{true:'right-wrapper-c',false:'right-wrapper'}[closeWrapper]" ng-include="'module/main/right.html'"></section>
+</div>
+
+<script src="lib/jquery/jquery.min.js"></script>
+
+<script src="js/common.js"></script>
+
+<script src="lib/bootstrap/js/bootstrap.min.js"></script>
+<script src="lib/angular/angular.js"></script>
+<script src="lib/angular/angular-resource.js"></script>
+<script src="lib/angularui/angular-locale_zh-cn.js"></script>
+<script src="lib/angularui/angular-ui-router.js"></script>
+
+<script src="lib/uiBootstrap/ui-bootstrap-tpls.js"></script>
+<script src="lib/ocLazyLoad/ocLazyLoad.min.js"></script>
+<script src="lib/bootstrapDatePicker/js/bootstrap-datepicker.min.js"></script>
+<script src="lib/bootstrapDatePicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+<script src="lib/bootstrapDatetimePicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="lib/bootstrapDatetimePicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="lib/angularuiSwitch/js/angular-ui-switch.min.js"></script>
+<script src="lib/angularuiSelect/js/select.min.js"></script>
+<script src="lib/chart/js/Chart.min.js"></script>
+<script src="lib/angularChart/js/angular-chart.min.js"></script>
+<!--<script src="lib/ngFileUpload/js/ng-file-upload-shim.js"></script>
+<script src="lib/ngFileUpload/js/ng-file-upload.min.js"></script>-->
+
+<script src="lib/layui/layui.all.js"></script>
+
+<!--<script type="text/javascript" src="lib/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="lib/ueditor/ueditor.all.js"></script>
+<script type="text/javascript" src="lib/ueditor/lang/zh-cn/zh-cn.js"></script>
+<script type="text/javascript" src="lib/angularUeditor/js/angular-ueditor.js"></script>-->
+
+
+
+<!--all custom directive -->
+<script src="module/common/base/base.js"></script>
+<script src="module/common/directive/navView/navView.js"></script>
+<script src="module/common/directive/modal/modal.js"></script>
+<script src="module/common/directive/pagination/pagination.js"></script>
+<script src="module/common/directive/dataView/dataView.js"></script>
+<script src="module/common/directive/datePicker/datePicker.js"></script>
+<script src="module/common/directive/datetimePicker/datetimePicker.js"></script>
+<script src="module/common/directive/tree/tree.js"></script>
+
+
+
+<script src="js/app.js"></script>
+
+
+<script src="module/main/js/mainState.js"></script>
+
+<script src="module/type/js/typeState.js"></script>
+<script src="module/type/js/small-typeState.js"></script>
+
+
+<script src="module/department-employment/js/departmentState.js"></script>
+<script src="module/department-employment/js/employmentState.js"></script>
+
+<script src="module/reimburse/js/reimburseState.js"></script>
+
+<script src="module/project/js/projectState.js"></script>
+
+
+
+</body>
+
+</html>

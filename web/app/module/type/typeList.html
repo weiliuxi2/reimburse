@@ -1,0 +1,118 @@
+<div ng-controller="reimburse.typeListCtl">
+    <div class="c-body-box">
+        <p class="c-line-title">报销大类</p>
+        <button type="button" class="btn btn-primary" style="float: right;margin-right: 19px;margin-bottom: 10px;" ng-click="openAddBigTypeWindow();">创建类别</button>
+        <div class="c-datatable-box">
+            <table class="table table-bordered table-hover ">
+                <thead>
+                <tr>
+                    <th class="text-center col-md-1">序号</th>
+                    <th class="text-center col-md-1">名称</th>
+                    <th class="text-center col-md-1">创建时间</th>
+                    <th class="text-center col-md-1">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in bigTypeList">
+                    <td class="text-center" ng-bind="$index+1"></td>
+                    <td class="text-center" ng-bind="item.name"></td>
+                    <td class="text-center" ng-bind="item.updateTime | date :'yyyy-MM-dd hh:mm:ss'"></td>
+                    <td class="text-center">
+                        <button class="btn  btn-info btn-sm" ng-click="openEditBigTypeWindow(item)">编辑</button>
+                        <button class="btn  btn-info btn-sm" ng-click="deleteBigTypeWindow(item.id)">删除</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <!--<div cjhme-data-pager options="dataTableConfig" receive="dataPagerReceive" search="dataPagerSearch"></div>-->
+        </div>
+    </div>
+</div>
+
+<script type="text/ng-template" id="addBigType.html">
+    <div class="modal-header">
+        <h4 class="modal-title bold text-danger">创建大类</h4>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="BigTypeAddForm">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger">*</span> 名称：</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control"  ng-model="bigTypeData.name" name="bigTypeAddName"
+                               ng-maxlength="16" ng-required="true" ng-pattern="'^[a-zA-Z0-9\u4e00-\u9fa5]+$'">
+                        <div ng-if="BigTypeAddForm.bigTypeAddName.$dirty || BigTypeAddForm.$submitted" >
+                            <div class="check-result" ng-show="BigTypeAddForm.bigTypeAddName.$error.required">名称不能为空</div>
+                            <div class="check-result" ng-show="BigTypeAddForm.bigTypeAddName.$error.pattern">只能由中文、英文字母、数字组成</div>
+                            <div class="check-result" ng-show="BigTypeAddForm.bigTypeAddName.$error.maxlength">名称最大长度不能超过16个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label">备注：</label>
+                    <div class="col-md-9">
+                        <textarea rows="3" class="form-control" placeholder="请输入备注" ng-model="bigTypeData.description"
+                                  name="bigTypAddDescription"  ng-maxlength="128"></textarea>
+                        <div ng-if="BigTypeAddForm.bigTypAddDescription.$dirty || BigTypeAddForm.$submitted" >
+                            <div class="check-result" ng-show="BigTypeAddForm.bigTypAddDescription.$error.maxlength">最大长度不能超过128个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="col-md-offset-1 col-md-10">
+                    <button type="button" class="btn btn-primary" ng-click="saveBigTypeReq();" ng-disabled="!BigTypeAddForm.$valid"> 保存</button>&nbsp;
+                    <button type="button" class="btn btn-success" ng-click="cancel();">取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="editBigType.html">
+    <div class="modal-header">
+        <h4 class="modal-title bold text-danger">编辑大类</h4>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="BigTypeEditForm">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger">*</span> 名称：</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control"  ng-model="editBigTypeData.name" name="bigTypeEditName"
+                               ng-maxlength="16" ng-required="true" ng-pattern="'^[a-zA-Z0-9\u4e00-\u9fa5]+$'">
+                        <div ng-if="BigTypeEditForm.bigTypeEditName.$dirty || BigTypeEditForm.$submitted" >
+                            <div class="check-result" ng-show="BigTypeEditForm.bigTypeEditName.$error.required">名称不能为空</div>
+                            <div class="check-result" ng-show="BigTypeEditForm.bigTypeEditName.$error.pattern">只能由中文、英文字母、数字组成</div>
+                            <div class="check-result" ng-show="BigTypeEditForm.bigTypeEditName.$error.maxlength">名称最大长度不能超过16个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label">备注：</label>
+                    <div class="col-md-9">
+                        <textarea rows="3" class="form-control" placeholder="请输入备注" ng-model="editBigTypeData.description"
+                                  name="bigTypEditDescription"  ng-maxlength="128"></textarea>
+                        <div ng-if="BigTypeEditForm.bigTypEditDescription.$dirty || BigTypeEditForm.$submitted" >
+                            <div class="check-result" ng-show="BigTypeEditForm.bigTypEditDescription.$error.maxlength">最大长度不能超过128个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="col-md-offset-1 col-md-10">
+                    <button type="button" class="btn btn-primary" ng-click="editBigTypeReq();" ng-disabled="!BigTypeEditForm.$valid"> 修改</button>&nbsp;
+                    <button type="button" class="btn btn-success" ng-click="cancel();">取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>

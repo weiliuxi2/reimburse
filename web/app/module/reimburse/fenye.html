@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-Type" content="text/html; charset=utf-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="renderer" content="webkit" />
+    <link rel="stylesheet" href="../common/ui/layui/css/layui.css">
+    <link rel="stylesheet" href="../common/ui/public/iconfont/iconfont.css">
+</head>
+<body>
+<div ng-app="device-app" ng-controller="device-controller" class="content-zone">
+    <h3 class="title">设备列表</h3>
+    <div id="device-list">
+        <div class="layui-clear action-bar">
+            <div class="f-left">
+                <div class="layui-search-block" style="width:220px">
+                    <input type="text" id="deviceName" name="deviceName" placeholder="请输入名称进行搜索" class="layui-input">
+                </div>
+                <button  class="layui-btn layui-btn-search" ng-click="getDeviceList(1)"><i class="iconfont">&#xe606;</i></button>
+            </div>
+            <div class="f-right">
+                <button class="layui-btn layui-btn-small" ng-click="registryDeviceWindow()">注册设备</button>
+                <button class="layui-btn layui-btn-small" ng-click="openUploadWindow()">批量注册</button>
+                <button class="layui-btn layui-btn-small" ng-click="delDevices()">批量删除</button>
+            </div>
+        </div>
+        <table class="layui-table">
+            <thead>
+            <th style="width: 4%" class="text-center">
+                <input type="checkbox" ng-click="selectAll()" ng-checked="selectedAll">
+            </th>
+            <th class="text-center">设备名称</th>
+            <th class="text-center">状态</th>
+            <th class="text-center">所属系列</th>
+            <th class="text-center">创建时间</th>
+            <th class="text-center">最后状态更新时间</th>
+            <th class="text-center">设备ID</th>
+            <th class="text-center" style="width:23%">操作</th>
+            </thead>
+            <tbody>
+            <tr ng-repeat="v in dataList">
+                <td class="text-center">
+                    <input type="checkbox" ng-click="select(v)" name="deviceId" ng-checked="v.selected" ng-value="v.id">
+                </td>
+                <td class="text-center">
+                    <a ng-click="gotoDeviceDetail(v.id)" href="#" style="color:cornflowerblue;" title="查看设备详情" ng-bind="v.name"></a>
+                </td>
+                <td class="text-center">
+                    <span  ng-if="v.status == 0" >未激活</span>
+                    <span  ng-if="v.status == 1" >在线</span>
+                    <span  ng-if="v.status == 2" >离线</span>
+                </td>
+                <td class="text-center">
+                    <span ng-bind="v.series" title="{{v.series}}"></span>
+                </td>
+                <td class="text-center">
+                    <span title="{{v.createTime | date:'yyyy-MM-dd HH:mm:ss'}}" ng-bind="v.createTime | date:'yyyy-MM-dd HH:mm:ss' "></span>
+                </td>
+                <td class="text-center">
+                    <span title="{{v.lastOnlineTime | date:'yyyy-MM-dd HH:mm:ss'}}" ng-bind="v.lastOnlineTime | date:'yyyy-MM-dd HH:mm:ss' "></span>
+                </td>
+                <td class="text-center">
+                    <span ng-bind="v.deviceId" title="{{v.deviceId}}"></span>
+                </td>
+                <td class="text-center">
+                    <button class="layui-btn layui-btn-mini" ng-click="openshadowWindow(v.deviceId,v.productKey)">设备影子</button>
+                    <button class="layui-btn layui-btn-mini" ng-click="editDeviceWindow(v)">编辑</button>
+                    <button class="layui-btn layui-btn-mini" ng-click="deleteDevice(v.id,v.deviceId)">删除</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <!-- 分页 -->
+        <div id="page"></div>
+    </div>
+
+    <!-- 设备新增 -->
+    <div id="device-add-div">
+        <form id="device-add-from"  class="layui-open-page" style="margin-right:20px">
+            <div class="form-block">
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><font color="red">*</font>设备名称</label>
+                    <div class="layui-input-block">
+                        <input type="text"  ng-model="data.name"  placeholder="仅允许中英文字符、数字、下划线、中划线，最大长度32" autocomplete="off"
+                               class="layui-input device-verify" data-check="common-name-check" ng-maxlength="32">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><font color="red">*</font>设备ID</label>
+                    <div class="layui-input-block">
+                        <input type="text" ng-model="data.deviceId"  placeholder="仅允许英文字符、数字、下划线、中划线，最大长度32" autocomplete="off"
+                               class="layui-input" data-check="common-check">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><font color="red">*</font>设备密钥</label>
+                    <div class="layui-input-block">
+                        <input type="text" ng-model="data.deviceKey"  placeholder="仅允许英文字符、数字、下划线、中划线，最大长度32" autocomplete="off"
+                               class="layui-input" data-check="common-check">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><font color="red">*</font>所属系列</label>
+                    <div class="layui-input-block">
+                        <input type="text" ng-model="data.series"  placeholder="仅允许英文字符、数字、下划线、中划线，最大长度32" autocomplete="off"
+                               class="layui-input" data-check="common-check">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><font color="red">*</font>所属产品</label>
+                    <div class="layui-input-block">
+                        <select class="layui-input layui-inline"  ng-model="data.productId" ng-options="x for (x, y) in productData" data-check="required">
+                            <option value="">-- 产品 --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">固件版本</label>
+                    <div class="layui-input-block">
+                        <input type="text" ng-model="data.firmwareVersion" placeholder="仅允许英文字符、数字、下划线、中划线，最大长度32"
+                               autocomplete="off" class="layui-input" data-check="common-check-norequired">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">描述信息</label>
+                    <div class="layui-input-block">
+                        <textarea ng-model="data.description"  class="layui-textarea" maxlength="200" placeholder="最大长度200"></textarea>
+                    </div>
+                </div>
+                <div class="f-right">
+                    <button type="button" class="layui-btn layui-btn-small layui-btn-confirm" ng-click="registryDevice($event)">保存</button>
+                    <button type="button" class="layui-btn layui-btn-small layui-btn-primary" onclick="closeLayer()">取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- 设备修改 -->
+    <div id="device-edit-div">
+        <form id="device-edit-from"  class="layui-open-page" style="margin-right:20px">
+            <div class="form-block">
+                <input type="hidden" ng-model="edit.id">
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><font color="red">*</font>设备名称</label>
+                    <div class="layui-input-block" style="width:320px">
+                        <input type="text" ng-model="edit.name"  autocomplete="off" class="layui-input" data-check="common-name-check">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><font color="red">*</font>设备ID</label>
+                    <div class="layui-input-block" style="width:320px">
+                        <input type="text" ng-model="edit.deviceId"  autocomplete="off" class="layui-input" data-check="common-check" disabled>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><font color="red">*</font>设备密钥</label>
+                    <div class="layui-input-block" style="width:320px">
+                        <input type="text" ng-model="edit.deviceKey"  autocomplete="off" class="layui-input" data-check="common-check" disabled>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><font color="red">*</font>所属系列</label>
+                    <div class="layui-input-block" style="width:320px">
+                        <input type="text" ng-model="edit.series"  autocomplete="off" class="layui-input" data-check="common-check">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><font color="red">*</font>所属产品</label>
+                    <select class="layui-input layui-inline"  ng-model="edit.productId" ng-options="x for (x, y) in productData" data-check="required">
+                        <option value="">-- 产品 --</option>
+                    </select>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">固件版本</label>
+                    <div class="layui-input-block" style="width:320px">
+                        <input type="text" ng-model="edit.firmwareVersion" autocomplete="off" class="layui-input" data-check="common-check-norequired">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">描述信息</label>
+                    <div class="layui-input-block">
+                        <textarea ng-model="edit.description"  class="layui-textarea" maxlength="200" placeholder="最大长度200"></textarea>
+                    </div>
+                </div>
+                <div class="f-right">
+                    <button type="button" class="layui-btn layui-btn-small layui-btn-confirm" ng-click="editDevice($event)">保存</button>
+                    <button type="button" class="layui-btn layui-btn-small layui-btn-primary" onclick="closeLayer()">取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- 文件上传 -->
+    <form id="uploadFileForm" class="layui-hide" name="uploadFileForm" novalidate>
+        <div class="layui-f-right">
+            <button  class="layui-btn layui-btn-mini" ng-click="downloadFile()">下载模板</button>
+        </div>
+        <div class="layui-form-item" style="margin-left:32px;color:red;"><span>请按照模板文件，从第二行开始，填入你所需要导入的设备信息</span></div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span class="red">*</span>选择文件</label>
+            <div class="layui-input-block" style="width:320px">
+                <input id="excelfile" type="file" name="file" style="width: 320px;">
+
+                <div id="uploadProgress" style="display:none;marign-top:3px;" class="layui-progress layui-progress-big" lay-showpercent="no"  lay-filter="uploadProgress">
+                    <div class="layui-progress-bar" lay-percent="1%"></div>
+                </div>
+                <button  class="layui-btn layui-btn-mini" ng-click="uploadFile($event)" style="margin-top:10px;">上传</button>
+            </div>
+        </div>
+        <div class="layui-f-right">
+            <button  class="layui-btn" ng-click="saveFileData($event)" disabled id="import-btn">导入</button>
+            <button type="button" class="layui-btn layui-btn-small layui-btn-primary" onclick="closeLayer()">取消</button>
+        </div>
+    </form>
+
+    <!-- 设备影子 -->
+    <form id="shadowForm" class="layui-hide"  novalidate>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="text-align:left;width:40px;">消息</label>
+            <div class="layui-input-block" >
+                <textarea ng-model="message.content"  class="layui-textarea" style="height:300px;"></textarea>
+            </div>
+        </div>
+        <div class="layui-f-right">
+            <button  class="layui-btn" ng-click="updateShadow()" >保存</button>
+            <button type="button" class="layui-btn layui-btn-small layui-btn-primary" onclick="closeLayer()">取消</button>
+        </div>
+    </form>
+
+</div>
+</body>
+<script src="../common/js/jquery.min.js"></script>
+<script src="../common/js/angular-1.6.5/angular.min.js"></script>
+<script src="../common/js/angular-1.6.5/angular-resource.js"></script>
+<script src="../common/ui/layui/lay/dest/layui.all.js"></script>
+<script src="../common/js/common.js"></script>
+<script src="js/index.js"></script>
+</html>

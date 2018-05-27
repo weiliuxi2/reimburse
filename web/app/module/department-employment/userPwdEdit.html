@@ -1,0 +1,61 @@
+<div ng-controller="reimburse.passwordEditCtl">
+	<div class="c-body-box">
+		<form class="form-horizontal" role="form" name="passwordForm">
+			<p class="c-line-title">密码修改</p>
+			<div class="form-group">
+				<div class="form-group">
+					<div class="col-md-12">
+						<label class="col-md-2 control-label">姓名：</label>
+						<div class="col-md-9">
+							<div class="form-control" ng-bind="userInfo.name"></div>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<div class="col-md-12">
+						<label class="col-md-2 control-label"><span class="text-danger">*</span> 新密码：</label>
+						<div class="col-md-9">
+							<input type="password" class="form-control" placeholder="请输入新密码" ng-model="employmentvo.password" name="passwordFormnewPW"
+								   ng-maxlength="32" ng-required="true" ng-minlength="8">
+							<div ng-if="passwordForm.passwordFormnewPW.$dirty || passwordForm.$submitted" class="w650">
+								<div class="check-result" ng-show="passwordForm.passwordFormnewPW.$error.required">密码不能为空</div>
+								<div class="check-result" ng-show="passwordForm.passwordFormnewPW.$error.minlength">密码最小长度不能少于8个字符</div>
+								<div class="check-result" ng-show="passwordForm.passwordFormnewPW.$error.maxlength">密码最大长度不能超过32个字符</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group">
+
+					<div class="col-md-12">
+						<label class="col-md-2 control-label"><span class="text-danger">*</span> 确认密码：</label>
+						<div class="col-md-9">
+							<input type="password" class="form-control" placeholder="请输入确认密码" ng-model="newPassword2"  name="passwordFormnewPW2"
+								   ng-maxlength="32" ng-required="true" ng-minlength="8">
+							<div ng-if="passwordForm.passwordFormnewPW2.$dirty || passwordForm.$submitted" class="w650">
+								<div class="check-result" ng-show="passwordForm.passwordFormnewPW2.$error.required">密码不能为空</div>
+								<div class="check-result" ng-show="passwordForm.passwordFormnewPW2.$error.minlength">密码最小长度不能少于8个字符</div>
+								<div class="check-result" ng-show="passwordForm.passwordFormnewPW2.$error.maxlength">密码最大长度不能超过32个字符</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group">
+
+					<div class="col-md-12">
+						<label class="col-md-2 control-label"></label>
+						<div class="col-md-9">
+							<button type="button" class="btn btn-primary" ng-click="savePassword();" ng-disabled="!passwordForm.$valid">保存</button>&nbsp;
+						</div>
+					</div>
+				</div>
+
+
+
+			</div>
+		</form>
+	</div>
+</div>

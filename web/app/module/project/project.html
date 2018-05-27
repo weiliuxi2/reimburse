@@ -1,0 +1,153 @@
+<div ng-controller="reimburse.projectCtl">
+    <div class="c-body-box">
+        <p class="c-line-title">项目管理</p>
+        <button type="button" class="btn btn-primary" style="float: right;margin-right: 19px;margin-bottom: 10px;" ng-click="openAddWindow();">添加项目</button>
+        <div class="c-datatable-box">
+            <table class="table table-bordered table-hover ">
+                <thead>
+                <tr>
+                    <th class="text-center col-md-1">序号</th>
+                    <th class="text-center col-md-1">项目编号</th>
+                    <th class="text-center col-md-1">项目名称</th>
+                    <th class="text-center col-md-1">创建时间</th>
+                    <th class="text-center col-md-1">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in dataList">
+                    <td class="text-center" ng-bind="$index+1"></td>
+                    <td class="text-center" ng-bind="item.bianHao" title="{{item.bianHao}}"></td>
+
+                    <td class="text-center" ng-bind="item.name | textLengthSet:true:15:'...'" title="{{item.name}}"></td>
+                    <td class="text-center" ng-bind="item.createTime | date :'yyyy-MM-dd hh:mm:ss'"></td>
+                    <td class="text-center">
+                        <button class="btn  btn-info btn-sm" ng-click="openEditWindow(item)">编辑</button>
+                        <button class="btn  btn-info btn-sm" ng-click="deleteWindow(item.id)">删除</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <!--<div cjhme-data-pager options="dataTableConfig" receive="dataPagerReceive" search="dataPagerSearch"></div>-->
+        </div>
+    </div>
+</div>
+
+<script type="text/ng-template" id="add.html">
+    <div class="modal-header">
+        <h4 class="modal-title bold text-danger">添加项目</h4>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="projectAddForm">
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger">*</span> 编号：</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control"  ng-model="data.bianHao" name="projectAddBianHao"
+                               ng-maxlength="64" ng-required="true" >
+                        <div ng-if="projectAddForm.projectAddBianHao.$dirty || projectAddForm.$submitted">
+                            <div class="check-result" ng-show="projectAddForm.projectAddBianHao.$error.required">工号不能为空</div>
+                            <div class="check-result" ng-show="projectAddForm.projectAddBianHao.$error.maxlength">工号最大长度不能超过64个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger">*</span> 名称：</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control"  ng-model="data.name" name="projectAddName"
+                               ng-maxlength="128" ng-required="true" >
+                        <div ng-if="projectAddForm.projectAddName.$dirty || projectAddForm.$submitted" class="w650">
+                            <div class="check-result" ng-show="projectAddForm.projectAddName.$error.required">名称不能为空</div>
+                            <!--<div class="check-result" ng-show="projectAddForm.projectAddName.$error.pattern">只能由中文、英文字母、数字组成</div>-->
+                            <div class="check-result" ng-show="projectAddForm.projectAddName.$error.maxlength">名称最大长度不能超过128个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label">备注：</label>
+                    <div class="col-md-9">
+                        <textarea rows="3" class="form-control" placeholder="请输入备注" ng-model="data.description"
+                                  name="projectAddDescription"  ng-maxlength="128"></textarea>
+                        <div ng-if="projectAddForm.projectAddDescription.$dirty || projectAddForm.$submitted" >
+                            <div class="check-result" ng-show="projectAddForm.projectAddDescription.$error.maxlength">最大长度不能超过128个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="col-md-offset-1 col-md-10">
+                    <button type="button" class="btn btn-primary" ng-click="saveReq();" ng-disabled="!projectAddForm.$valid"> 保存</button>&nbsp;
+                    <button type="button" class="btn btn-success" ng-click="cancel();">取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="edit.html">
+    <div class="modal-header">
+        <h4 class="modal-title bold text-danger">编辑项目</h4>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="projectEditForm">
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger">*</span> 编号：</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control"  ng-model="editData.bianHao" name="projectEditBianHao"
+                               ng-maxlength="64" ng-required="true">
+                        <div ng-if="projectEditForm.projectEditBianHao.$dirty || projectEditForm.$submitted">
+                            <div class="check-result" ng-show="projectEditForm.projectEditBianHao.$error.required">工号不能为空</div>
+                            <div class="check-result" ng-show="projectEditForm.projectEditBianHao.$error.maxlength">工号最大长度不能超过64个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger">*</span> 名称：</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control"  ng-model="editData.name" name="projectEditName"
+                               ng-maxlength="128" ng-required="true" >
+                        <div ng-if="projectEditForm.projectEditName.$dirty || projectEditForm.$submitted" class="w650">
+                            <div class="check-result" ng-show="projectEditForm.projectEditName.$error.required">名称不能为空</div>
+                            <!--<div class="check-result" ng-show="projectEditForm.projectEditName.$error.pattern">只能由中文、英文字母、数字组成</div>-->
+                            <div class="check-result" ng-show="projectEditForm.projectEditName.$error.maxlength">名称最大长度不能超过128个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label">备注：</label>
+                    <div class="col-md-9">
+                        <textarea rows="3" class="form-control" placeholder="请输入备注"  ng-model="editData.description"
+                                  name="projectEditDescription"  ng-maxlength="128"></textarea>
+                        <div ng-if="projectEditForm.projectEditDescription.$dirty || projectEditForm.$submitted" >
+                            <div class="check-result" ng-show="projectEditForm.projectEditDescription.$error.maxlength">最大长度不能超过128个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="col-md-offset-1 col-md-10">
+                    <button type="button" class="btn btn-primary" ng-click="editReq();" ng-disabled="!projectEditForm.$valid"> 修改</button>&nbsp;
+                    <button type="button" class="btn btn-success" ng-click="cancel();">取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>

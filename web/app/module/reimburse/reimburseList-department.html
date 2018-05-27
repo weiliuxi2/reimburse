@@ -1,0 +1,90 @@
+<div ng-controller="reimburse.reimburseDepartmentListCtl">
+    <div class="c-body-box">
+        <p class="c-line-title">报销管理</p>
+        <form class="form-horizontal" role="form" method='post'>
+            <button type="button" class="btn btn-primary" style="float: right;margin-right: 19px;margin-bottom: 10px;" ng-click="downExcel();" ng-disabled="reimburseBaseList.length == 0">导出</button>
+
+        <div class="c-datatable-box">
+            <table class="table table-bordered table-hover ">
+                <thead>
+                <tr>
+                    <th class="text-center col-md-1" style="width: 3%">序号</th>
+                    <th class="text-center col-md-1" style="" >员工姓名</th>
+                    <th class="text-center col-md-1" style="" >报销单名</th>
+                    <th class="text-center col-md-1">总额</th>
+
+                    <th class="text-center col-md-1">状态</th>
+                    <th class="text-center col-md-1">创建时间</th>
+                    <th class="text-center col-md-1" style="width: 10%">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in reimburseBaseList">
+                    <td class="text-center" ng-bind="$index+1 + ((pageData.pageNo -1 ) * pageData.pageSize)"></td>
+                    <td class="text-center" ng-bind="item.employmentName"></td>
+                    <td class="text-center" ng-bind="item.name | textLengthSet:true:10:'...'" title="{{item.name}}"></td>
+                    <td class="text-center" ng-bind="item.total"></td>
+
+
+                    <td class="text-center">
+                        <span ng-if="item.status == 1">未上报</span>
+                        <span ng-if="item.status == 2">审批中</span>
+                        <span ng-if="item.status == 3">通过</span>
+                        <span ng-if="item.status == 4">驳回</span>
+                        <!--<span ng-if="item.status == 4 || item.status == 3" title="{{item.remark}}">:{{item.remark | textLengthSet:true:4:'...'}}</span>-->
+                    </td>
+                    <td class="text-center"  ng-bind="item.createTime | date :'yyyy-MM-dd hh:mm:ss'"></td>
+                    <td class="text-center">
+                        <button class="btn  btn-info btn-sm" ng-click="editReimburse(item.danHao);">查看</button>
+                        <button class="btn  btn-info btn-sm" ng-disabled="item.status == 1"  ng-click="openShenPiWindow(item.id,item.danHao)">审批</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div id="page"></div>
+            <!--<div cjhme-data-pager options="dataTableConfig" receive="dataPagerReceive" search="dataPagerSearch"></div>-->
+        </div>
+        </form>
+    </div>
+</div>
+
+
+<script type="text/ng-template" id="shenpi.html">
+    <div class="modal-header">
+        <h4 class="modal-title bold text-danger">审批</h4>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" >
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger">*</span> 审批结果：</label>
+                    <div class="col-md-9">
+                        <ui-select ng-model="result.code">
+                            <ui-select-match placeholder="请选择">{{$select.selected.name}}</ui-select-match>
+                            <ui-select-choices repeat="item in shenpiData">
+                                <div ng-bind="item.name"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label">备注：</label>
+                    <div class="col-md-9">
+                        <textarea rows="3" class="form-control" placeholder="请输入备注"
+                                  ng-model="result.remark"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="col-md-offset-1 col-md-10">
+                    <button type="button" class="btn btn-primary" ng-click="editReq();"> 确定</button>&nbsp;
+                    <button type="button" class="btn btn-success" ng-click="cancel();">取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>

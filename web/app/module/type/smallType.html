@@ -1,0 +1,158 @@
+<div ng-controller="reimburse.smallTypeCtl">
+    <div class="c-body-box">
+        <p class="c-line-title">报销小类</p>
+        <button type="button" class="btn btn-primary" style="float: right;margin-right: 19px;margin-bottom: 10px;" ng-click="openAddWindow();">创建小类</button>
+        <div class="c-datatable-box">
+            <table class="table table-bordered table-hover ">
+                <thead>
+                <tr>
+                    <th class="text-center col-md-1">序号</th>
+                    <th class="text-center col-md-1">名称</th>
+                    <th class="text-center col-md-1">大类名称</th>
+                    <th class="text-center col-md-1">创建时间</th>
+                    <th class="text-center col-md-1">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in dataList">
+                    <td class="text-center" ng-bind="$index+1"></td>
+                    <td class="text-center" ng-bind="item.name"></td>
+                    <td class="text-center" ng-bind="item.bigTypeName"></td>
+                    <td class="text-center" ng-bind="item.createTime | date :'yyyy-MM-dd hh:mm:ss'"></td>
+                    <td class="text-center">
+                        <button class="btn  btn-info btn-sm" ng-click="openEditWindow(item)">编辑</button>
+                        <button class="btn  btn-info btn-sm" ng-click="deleteWindow(item.id)">删除</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <!--<div cjhme-data-pager options="dataTableConfig" receive="dataPagerReceive" search="dataPagerSearch"></div>-->
+        </div>
+    </div>
+</div>
+
+<script type="text/ng-template" id="add.html">
+    <div class="modal-header">
+        <h4 class="modal-title bold text-danger">创建小类</h4>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="SmallTypeAddForm">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger">*</span> 名称：</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control"  ng-model="data.name" name="smallTypeAddName"
+                               ng-maxlength="16" ng-required="true" ng-pattern="'^[a-zA-Z0-9\u4e00-\u9fa5]+$'">
+                        <div ng-if="SmallTypeAddForm.smallTypeAddName.$dirty || SmallTypeAddForm.$submitted" >
+                            <div class="check-result" ng-show="SmallTypeAddForm.smallTypeAddName.$error.required">名称不能为空</div>
+                            <div class="check-result" ng-show="SmallTypeAddForm.smallTypeAddName.$error.pattern">只能由中文、英文字母、数字组成</div>
+                            <div class="check-result" ng-show="SmallTypeAddForm.smallTypeAddName.$error.maxlength">名称最大长度不能超过16个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger">*</span> 选择大类：</label>
+                    <div class="col-md-9">
+                        <ui-select ng-model="data.bigTypeId" name="smallTypeAddBigType" ng-required="true">
+                            <ui-select-match placeholder="请选择类别">{{$select.selected.name}}</ui-select-match>
+                            <ui-select-choices repeat="item in bigTypeList">
+                                <div ng-bind="item.name"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                        <div ng-if="SmallTypeAddForm.smallTypeAddBigType.$dirty || SmallTypeAddForm.$submitted">
+                            <div class="check-result" ng-show="SmallTypeAddForm.smallTypeAddBigType.$error.required">不能为空</div>
+                            <!--<div class="check-result" ng-show="employmentAddForm.employmentAddEmploymentId.$error.pattern">只能由英文字母、数字组成</div>-->
+                            <!--<div class="check-result" ng-show="employmentAddForm.employmentAddEmploymentId.$error.maxlength">工号最大长度不能超过32个字符</div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label">备注：</label>
+                    <div class="col-md-9">
+                        <textarea rows="3" class="form-control" placeholder="请输入备注"   ng-model="data.description"
+                                  name="smallTypAddDescription"  ng-maxlength="128"></textarea>
+                        <div ng-if="SmallTypeAddForm.smallTypAddDescription.$dirty || SmallTypeAddForm.$submitted" >
+                            <div class="check-result" ng-show="SmallTypeAddForm.smallTypAddDescription.$error.maxlength">最大长度不能超过128个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="col-md-offset-1 col-md-10">
+                    <button type="button" class="btn btn-primary" ng-click="saveReq();" ng-disabled="!SmallTypeAddForm.$valid"> 保存</button>&nbsp;
+                    <button type="button" class="btn btn-success" ng-click="cancel();">取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="edit.html">
+    <div class="modal-header">
+        <h4 class="modal-title bold text-danger">编辑小类</h4>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="SmallTypeEditForm">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger">*</span> 名称：</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control"  ng-model="editData.name" name="smallTypeEditName"
+                               ng-maxlength="16" ng-required="true" ng-pattern="'^[a-zA-Z0-9\u4e00-\u9fa5]+$'">
+                        <div ng-if="SmallTypeEditForm.smallTypeEditName.$dirty || SmallTypeEditForm.$submitted" >
+                            <div class="check-result" ng-show="SmallTypeEditForm.smallTypeEditName.$error.required">名称不能为空</div>
+                            <div class="check-result" ng-show="SmallTypeEditForm.smallTypeEditName.$error.pattern">只能由中文、英文字母、数字组成</div>
+                            <div class="check-result" ng-show="SmallTypeEditForm.smallTypeEditName.$error.maxlength">名称最大长度不能超过16个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger">*</span> 选择大类：</label>
+                    <div class="col-md-9">
+                        <ui-select ng-model="editData.bigTypeId" name="smallTypeEditBigType" ng-required="true">
+                            <ui-select-match placeholder="请选择类别">{{$select.selected.name}}</ui-select-match>
+                            <ui-select-choices repeat="item in bigTypeList">
+                                <div ng-bind="item.name"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                        <div ng-if="SmallTypeEditForm.smallTypeEditBigType.$dirty || SmallTypeEditForm.$submitted">
+                            <div class="check-result" ng-show="SmallTypeEditForm.smallTypeEditBigType.$error.required">不能为空</div>
+                            <!--<div class="check-result" ng-show="employmentAddForm.employmentAddEmploymentId.$error.pattern">只能由英文字母、数字组成</div>-->
+                            <!--<div class="check-result" ng-show="employmentAddForm.employmentAddEmploymentId.$error.maxlength">工号最大长度不能超过32个字符</div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label">备注：</label>
+                    <div class="col-md-9">
+                        <textarea rows="3" class="form-control" placeholder="请输入备注" ng-model="editData.description"
+                                  name="smallTypEditDescription"  ng-maxlength="128"></textarea>
+                        <div ng-if="SmallTypeEditForm.smallTypEditDescription.$dirty || SmallTypeEditForm.$submitted" >
+                            <div class="check-result" ng-show="SmallTypeEditForm.smallTypEditDescription.$error.maxlength">最大长度不能超过128个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="col-md-offset-1 col-md-10">
+                    <button type="button" class="btn btn-primary" ng-click="editReq();" ng-disabled="!SmallTypeEditForm.$valid"> 修改</button>&nbsp;
+                    <button type="button" class="btn btn-success" ng-click="cancel();">取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>

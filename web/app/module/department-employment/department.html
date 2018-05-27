@@ -1,0 +1,119 @@
+<div ng-controller="reimburse.departmentCtl">
+    <div class="c-body-box">
+        <p class="c-line-title">部门管理</p>
+        <button type="button" class="btn btn-primary" style="float: right;margin-right: 19px;margin-bottom: 10px;" ng-click="openAddWindow();">添加部门</button>
+        <div class="c-datatable-box">
+            <table class="table table-bordered table-hover ">
+                <thead>
+                <tr>
+                    <th class="text-center col-md-1">序号</th>
+                    <th class="text-center col-md-1">名称</th>
+                    <th class="text-center col-md-1">创建时间</th>
+                    <th class="text-center col-md-1">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in dataList">
+                    <td class="text-center" ng-bind="$index+1"></td>
+                    <td class="text-center" ng-bind="item.name"></td>
+                    <td class="text-center" ng-bind="item.updateTime | date :'yyyy-MM-dd hh:mm:ss'"></td>
+                    <td class="text-center">
+                        <button class="btn  btn-info btn-sm" ng-click="openEditWindow(item)">编辑</button>
+                        <button class="btn  btn-info btn-sm" ng-click="deleteWindow(item.id)">删除</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <!--<div cjhme-data-pager options="dataTableConfig" receive="dataPagerReceive" search="dataPagerSearch"></div>-->
+        </div>
+    </div>
+</div>
+
+<script type="text/ng-template" id="add.html">
+    <div class="modal-header">
+        <h4 class="modal-title bold text-danger">添加部门</h4>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="departmentAddForm">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger">*</span> 名称：</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control"  ng-model="data.name" name="departmentAddName"
+                               ng-maxlength="16" ng-required="true" ng-pattern="'^[a-zA-Z0-9\u4e00-\u9fa5]+$'">
+                        <div ng-if="departmentAddForm.departmentAddName.$dirty || departmentAddForm.$submitted" >
+                            <div class="check-result" ng-show="departmentAddForm.departmentAddName.$error.required">名称不能为空</div>
+                            <div class="check-result" ng-show="departmentAddForm.departmentAddName.$error.pattern">只能由中文、英文字母、数字组成</div>
+                            <div class="check-result" ng-show="departmentAddForm.departmentAddName.$error.maxlength">名称最大长度不能超过16个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label">备注：</label>
+                    <div class="col-md-9">
+                        <textarea rows="3" class="form-control" placeholder="请输入备注" ng-model="data.description"
+                                  name="departmentAddDescription"  ng-maxlength="128"></textarea>
+                        <div ng-if="departmentAddForm.departmentAddDescription.$dirty || departmentAddForm.$submitted" >
+                            <div class="check-result" ng-show="departmentAddForm.departmentAddDescription.$error.maxlength">最大长度不能超过128个字符</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="col-md-offset-1 col-md-10">
+                    <button type="button" class="btn btn-primary" ng-click="saveReq();" ng-disabled="!departmentAddForm.$valid"> 保存</button>&nbsp;
+                    <button type="button" class="btn btn-success" ng-click="cancel();">取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="editBigType.html">
+    <div class="modal-header">
+        <h4 class="modal-title bold text-danger">编辑部门</h4>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="departmentEditForm">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label"><span class="text-danger">*</span> 名称：</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control"  ng-model="editData.name" name="departmentEditName"
+                               ng-maxlength="16" ng-required="true" ng-pattern="'^[a-zA-Z0-9\u4e00-\u9fa5]+$'">
+                        <div ng-if="departmentEditForm.departmentEditName.$dirty || departmentEditForm.$submitted" >
+                            <div class="check-result" ng-show="departmentEditForm.departmentEditName.$error.required">名称不能为空</div>
+                            <div class="check-result" ng-show="departmentEditForm.departmentEditName.$error.pattern">只能由中文、英文字母、数字组成</div>
+                            <div class="check-result" ng-show="departmentEditForm.departmentEditName.$error.maxlength">名称最大长度不能超过16个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-3 control-label">备注：</label>
+                    <div class="col-md-9">
+                        <textarea rows="3" class="form-control" placeholder="请输入备注"
+                                  ng-model="editData.description" name="departmentEditDescription"  ng-maxlength="128"></textarea>
+                        <div ng-if="departmentEditForm.departmentEditDescription.$dirty || departmentEditForm.$submitted" >
+                            <div class="check-result" ng-show="departmentEditForm.departmentEditDescription.$error.maxlength">最大长度不能超过128个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="col-md-offset-1 col-md-10">
+                    <button type="button" class="btn btn-primary" ng-click="editReq();" ng-disabled="!departmentEditForm.$valid"> 修改</button>&nbsp;
+                    <button type="button" class="btn btn-success" ng-click="cancel();">取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>

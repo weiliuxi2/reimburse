@@ -1,0 +1,75 @@
+<div ng-controller="reimburse.employmentInfoCtl">
+    <div class="c-body-box">
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="employmentInfoForm">
+            <p class="c-line-title">基本信息</p>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-2 control-label"><span class="text-danger">*</span> 姓名：</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control" disabled ng-model="employmentInfo.name">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-2 control-label"><span class="text-danger">*</span> 工号：</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control"  disabled ng-model="employmentInfo.employmentId">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-2 control-label"><span class="text-danger">*</span> 部门：</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control"  disabled ng-model="employmentInfo.departmentName">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-2 control-label"><span class="text-danger"></span> 电话号码：</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control"  ng-model="employmentInfo.telephone" name="employmentInfoTelephone"
+                               ng-pattern="'^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\\d{8}$'">
+                        <div ng-if="employmentInfoForm.employmentInfoTelephone.$dirty || employmentInfoForm.$submitted">
+                            <div class="check-result" ng-show="employmentInfoForm.employmentInfoTelephone.$error.pattern">请输入正确的电话号码</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-2 control-label"><span class="text-danger"></span> 住址：</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control"  ng-model="employmentInfo.address" name="employmentInfoAddress"
+                               ng-maxlength="128" >
+                        <div ng-if="employmentInfoForm.employmentInfoAddress.$dirty || employmentInfoForm.$submitted" >
+                            <div class="check-result" ng-show="employmentInfoForm.employmentInfoAddress.$error.maxlength">最大长度不能超过128个字符</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+
+                <div class="col-md-12">
+                    <label class="col-md-2 control-label"></label>
+                    <div class="col-md-9">
+                        <button type="button" class="btn btn-primary" ng-click="savePassword();" ng-disabled="!employmentInfoForm.$valid">保存</button>&nbsp;
+                        <!--<button type="button" class="btn btn-success" ng-click="back();">取消</button>-->
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    </div>
+</div>
+
+

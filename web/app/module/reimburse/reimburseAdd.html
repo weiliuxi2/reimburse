@@ -1,0 +1,313 @@
+<div ng-controller="reimburse.reimburseAddCtl">
+	<div class="c-body-box">
+		<form class="form-horizontal" role="form" method='post' name="reimburseAddForm">
+
+			<p class="c-line-title">基本信息</p>
+			<div class="form-group">
+				<div class="col-md-6">
+					<label class="col-md-3 control-label"><span class="text-danger">*</span> 姓名：</label>
+					<div class="col-md-9">
+						<input type="text" class="form-control" disabled ng-model="baseData.employmentName">
+					</div>
+				</div>
+
+				<div class="col-md-6">
+					<label class="col-md-3 control-label"><span class="text-danger">*</span>部门：</label>
+					<div class="col-md-9">
+						<input type="text" class="form-control" disabled  ng-model="baseData.departmentName">
+					</div>
+				</div>
+
+			</div>
+
+			<div class="form-group">
+
+				<div class="col-md-6">
+					<label class="col-md-3 control-label"><span class="text-danger">*</span>报销名称：</label>
+					<div class="col-md-9">
+						<input rows="3" class="form-control" placeholder="请输入名称" ng-required="true"
+							   ng-pattern="'^[a-zA-Z0-9\u4e00-\u9fa5-_]+$'" ng-model="baseData.name" name="reimburseAddDescription"  ng-maxlength="128">
+						<div ng-if="reimburseAddForm.reimburseAddDescription.$dirty || reimburseAddForm.$submitted" >
+							<div class="check-result" ng-show="reimburseAddForm.reimburseAddDescription.$error.required">不能为空</div>
+							<div class="check-result" ng-show="reimburseAddForm.reimburseAddDescription.$error.pattern">只能由中文、英文字母、数字、下划线、中划线组成</div>
+							<div class="check-result" ng-show="reimburseAddForm.reimburseAddDescription.$error.maxlength">最大长度不能超过128个字符</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-6">
+					<label class="col-md-3 control-label"><span class="text-danger">*</span> 总额：</label>
+					<div class="col-md-9">
+						<input type="text" class="form-control" disabled ng-model="baseData.total">
+					</div>
+				</div>
+
+			</div>
+
+
+
+			<p class="c-line-title">报销明细</p>
+			<div class="form-group">
+				<div class="col-md-12">
+					<div class="col-md-12">
+						<button type="button" class="btn btn-primary btn-sm" ng-click="addDetail()"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> 添加</button>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-md-12">
+					<div class="col-md-12">
+						<table class="table table-bordered table-hover">
+							<thead>
+							<tr>
+								<th class="text-center col-md-1"  style="width: 4%">序号</th>
+								<th class="text-center col-md-1"  style="width: 100px;">项目编号</th>
+								<th class="text-center col-md-1"  style="width: 100px;">项目名称</th>
+								<th class="text-center col-md-1"  style="width:110px;">开始时间</th>
+								<th class="text-center col-md-1"  style="width:110px;">结束时间</th>
+								<th class="text-center col-md-1" style="width: 100px">类型</th>
+								<th class="text-center col-md-1"  style="width: 10%">金额</th>
+								<th class="text-center col-md-1"  style="width: 15%">说明</th>
+								<th class="text-center col-md-1">操作</th>
+							</tr>
+							</thead>
+							<tbody>
+							<tr  ng-repeat="item in reimburseDetailLists">
+								<td class="text-center" ng-bind="($index+1)"></td>
+
+								<td class="text-center">
+
+									<div class="myselect">
+										<ui-select ng-model="item.projectBianHaoA" title="{{item.projectBianHaoA.bianHao}}"
+												   ng-change="selectProjectName(item.projectBianHaoA.bianHao,$index)" ng-required="true" name="reimburseAddProjectBianHao">
+											<ui-select-match placeholder="请选择">{{$select.selected.bianHao}}</ui-select-match>
+											<ui-select-choices repeat="item in projectList | filter: $select.search track by item.bianHao">
+												<div ng-bind="item.bianHao" title="{{item.bianHao}}"></div>
+											</ui-select-choices>
+										</ui-select>
+										<div ng-if="reimburseAddForm.reimburseAddProjectBianHao.$dirty || reimburseAddForm.$submitted">
+											<div class="check-result" ng-show="reimburseAddForm.reimburseAddProjectBianHao.$error.required">不能为空</div>
+										</div>
+									</div>
+
+								</td>
+
+								<td class="text-center">
+
+										<div class="myselect">
+											<ui-select ng-model="item.projectNameA" ng-change="selectProjectBianHao(item.projectNameA.bianHao,$index)"
+													   title="{{item.projectNameA.name}}" ng-required="true" name="reimburseAddProjectName">
+												<ui-select-match placeholder="请选择">{{$select.selected.name}}</ui-select-match>
+												<ui-select-choices repeat="item in projectList| filter: $select.search track by item.name">
+													<div ng-bind="item.name" title="{{item.name}}"></div>
+												</ui-select-choices>
+											</ui-select>
+											<div ng-if="reimburseAddForm.reimburseAddProjectName.$dirty || reimburseAddForm.$submitted">
+												<div class="check-result" ng-show="reimburseAddForm.reimburseAddProjectName.$error.required">不能为空</div>
+											</div>
+										</div>
+
+								</td>
+
+								<td class="text-center" style="width:110px;">
+									<input type="text" name='myDate3' placeholder="请选择日期" class="form-control" ng-required="true"
+															   cjhme-date-picker format="yyyy-mm-dd" ng-model="item.beginTime" callback="callback" />
+									<div ng-if="reimburseAddForm.myDate3.$dirty || reimburseAddForm.$submitted">
+										<div class="check-result" ng-show="reimburseAddForm.myDate3.$error.required">不能为空</div>
+									</div>
+								</td>
+
+								<td class="text-center" style="width:110px;">
+									<input type="text" name='myDate4' placeholder="请选择日期" class="form-control" ng-required="true"
+										   cjhme-date-picker format="yyyy-mm-dd" ng-model="item.endTime" callback="callback" />
+									<div ng-if="reimburseAddForm.myDate4.$dirty || reimburseAddForm.$submitted">
+										<div class="check-result" ng-show="reimburseAddForm.myDate4.$error.required">不能为空</div>
+									</div>
+								</td>
+
+								<td class="text-center">
+									<div class="myselect">
+										<ui-select ng-model="item.typeNameA" title="{{item.typeNameA.name}}" ng-required="true" name="reimburseAddType">
+											<ui-select-match placeholder="请选择类别">{{$select.selected.name}}</ui-select-match>
+											<ui-select-choices repeat="item in bigTypeList | filter: $select.search track by item.name">
+												<div ng-bind="item.name"></div>
+											</ui-select-choices>
+										</ui-select>
+										<div ng-if="reimburseAddForm.reimburseAddType.$dirty || reimburseAddForm.$submitted">
+											<div class="check-result" ng-show="reimburseAddForm.reimburseAddType.$error.required">不能为空</div>
+										</div>
+									</div>
+								</td>
+
+
+								<td class="text-center">
+									<input type="text" class="form-control" ng-model="item.money" ng-change="computeTotalMonoey()" name="reimburseAddMoney"
+										   ng-required="true" ng-pattern="'^(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)'">
+									<div ng-if="reimburseAddForm.reimburseAddMoney.$dirty || reimburseAddForm.$submitted" >
+										<div class="check-result" ng-show="reimburseAddForm.reimburseAddMoney.$error.required">不能为空</div>
+										<div class="check-result" ng-show="reimburseAddForm.reimburseAddMoney.$error.pattern">请输入正确的金额</div>
+									</div>
+								</td>
+								<td class="text-center">
+									<input type="text" class="form-control" ng-model="item.description" ng-maxlength="64" name="reimburseAdddescription2" >
+									<div ng-if="reimburseAddForm.reimburseAdddescription2.$dirty || reimburseAddForm.$submitted" >
+										<div class="check-result" ng-show="reimburseAddForm.reimburseAdddescription2.$error.maxlength">最大长度64</div>
+									</div>
+								</td>
+								<td class="text-center">
+									<button type="button" class="btn btn-danger btn-sm" ng-click="delDetai($index )"><i class="fa fa-trash-o" aria-hidden="true"></i> 删除</button>
+								</td>
+							</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+
+
+
+
+
+
+			<div class="row">
+				<div class="col-md-offset-1 col-md-10">
+					<button type="button" class="btn btn-primary" ng-click="saveReq();" ng-disabled="!reimburseAddForm.$valid">保存</button>&nbsp;
+					<button type="button" class="btn btn-success" ng-click="returnReimburseList();">取消</button>
+				</div>
+			</div>
+
+		</form>
+	</div>
+</div>
+
+
+<script type="text/ng-template" id="addDetail.html">
+	<div class="modal-header">
+		<h4 class="modal-title bold text-danger">添加明细</h4>
+	</div>
+	<div class="modal-body">
+		<form class="form-horizontal" role="form" name="projectEditForm">
+
+
+
+			<div class="form-group">
+				<div class="col-md-12">
+					<label class="col-md-3 control-label"><span class="text-danger">*</span> 开始时间：</label>
+					<div class="col-md-9 input-icon">
+						<i class="fa fa-calendar fa-fw"></i>
+						<input type="text" name='myDateTime5' placeholder="请选择时间" class="form-control" cjhme-date-picker
+							   format="yyyy-mm-dd" ng-model="editBaseData.beginTime" callback="callback"/>
+						<div ng-if="reimburseEditForm.myDateTime5.$dirty || reimburseEditForm.$submitted">
+							<div class="check-result" ng-show="reimburseEditForm.myDateTime5.$error.required">不能为空</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-md-12">
+					<label class="col-md-3 control-label"><span class="text-danger">*</span> 结束时间：</label>
+					<div class="col-md-9 input-icon">
+						<i class="fa fa-calendar fa-fw"></i>
+						<input type="text" name='myDateTime5' placeholder="请选择时间" class="form-control" cjhme-date-picker
+							   format="yyyy-mm-dd" ng-model="editBaseData.beginTime" callback="callback"/>
+						<div ng-if="reimburseEditForm.myDateTime5.$dirty || reimburseEditForm.$submitted">
+							<div class="check-result" ng-show="reimburseEditForm.myDateTime5.$error.required">不能为空</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="form-group">
+				<div class="col-md-12">
+					<label class="col-md-3 control-label"><span class="text-danger">*</span> 类型：</label>
+					<div class="col-md-9">
+						<ui-select ng-model="editBaseData.bigType"  ng-required="true" name="reimburseEditBigType">
+							<ui-select-match placeholder="请选择类别">{{$select.selected.name}}</ui-select-match>
+							<ui-select-choices repeat="item in bigTypeList">
+								<div ng-bind="item.name"></div>
+							</ui-select-choices>
+						</ui-select>
+						<div ng-if="reimburseAddForm.reimburseAddSmallType.$dirty || reimburseAddForm.$submitted">
+							<div class="check-result" ng-show="reimburseAddForm.reimburseAddSmallType.$error.required">不能为空</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-md-12">
+					<label class="col-md-3 control-label"><span class="text-danger">*</span> 项目编号：</label>
+					<div class="col-md-9">
+						<ui-select ng-model="editBaseData.project" title="{{editBaseData.project.name}}" ng-required="true" name="reimburseEditProject">
+							<ui-select-match placeholder="请选择">{{$select.selected.name}}</ui-select-match>
+							<ui-select-choices repeat="item in projectList">
+								<div ng-bind="item.name" title="{{item.name}}"></div>
+							</ui-select-choices>
+						</ui-select>
+						<div ng-if="reimburseEditForm.reimburseEditProject.$dirty || reimburseEditForm.$submitted">
+							<div class="check-result" ng-show="reimburseEditForm.reimburseEditProject.$error.required">不能为空</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-md-12">
+					<label class="col-md-3 control-label"><span class="text-danger">*</span> 项目名称：</label>
+					<div class="col-md-9">
+						<ui-select ng-model="editBaseData.project" title="{{editBaseData.project.name}}" ng-required="true" name="reimburseEditProject">
+							<ui-select-match placeholder="请选择">{{$select.selected.name}}</ui-select-match>
+							<ui-select-choices repeat="item in projectList">
+								<div ng-bind="item.name" title="{{item.name}}"></div>
+							</ui-select-choices>
+						</ui-select>
+						<div ng-if="reimburseEditForm.reimburseEditProject.$dirty || reimburseEditForm.$submitted">
+							<div class="check-result" ng-show="reimburseEditForm.reimburseEditProject.$error.required">不能为空</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-md-12">
+					<label class="col-md-3 control-label"><span class="text-danger">*</span> 金额：</label>
+					<div class="col-md-9">
+						<input type="text" class="form-control"  ng-model="editData.name" name="projectEditName"
+							   ng-maxlength="128" ng-required="true" >
+						<div ng-if="projectEditForm.projectEditName.$dirty || projectEditForm.$submitted" class="w650">
+							<div class="check-result" ng-show="projectEditForm.projectEditName.$error.required">名称不能为空</div>
+							<!--<div class="check-result" ng-show="projectEditForm.projectEditName.$error.pattern">只能由中文、英文字母、数字组成</div>-->
+							<div class="check-result" ng-show="projectEditForm.projectEditName.$error.maxlength">名称最大长度不能超过128个字符</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="form-group">
+				<div class="col-md-12">
+					<label class="col-md-3 control-label">备注：</label>
+					<div class="col-md-9">
+                        <textarea rows="3" class="form-control" placeholder="请输入备注"  ng-model="editData.description"
+								  name="projectEditDescription"  ng-maxlength="128"></textarea>
+						<div ng-if="projectEditForm.projectEditDescription.$dirty || projectEditForm.$submitted" >
+							<div class="check-result" ng-show="projectEditForm.projectEditDescription.$error.maxlength">最大长度不能超过128个字符</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<div class="col-md-offset-1 col-md-10">
+					<button type="button" class="btn btn-primary" ng-click="editReq();" ng-disabled="!projectEditForm.$valid"> 修改</button>&nbsp;
+					<button type="button" class="btn btn-success" ng-click="cancel();">取消</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</script>
+
+
