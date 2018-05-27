@@ -145,9 +145,11 @@ aa.controller('reimburse.reimburseEditCtl', ['$scope', '$state', 'reimburseServi
         $scope.reimburseEditData = {};
         $scope.reimburseEditData.reimburseBase= {};
         $scope.updateReq = function () {
+            $("#editReimburseBtn").attr("disabled", true);
 
             if ($scope.editDetailLists.length == 0) {
                 cjhmeModal.error({content: "请填写报销明细",  autoClose: true} );
+                $("#editReimburseBtn").attr("disabled", false);
                 return;
             }
 
@@ -156,6 +158,7 @@ aa.controller('reimburse.reimburseEditCtl', ['$scope', '$state', 'reimburseServi
             for (var i = 0; i < $scope.editDetailLists.length; i ++) {
                 if ( $scope.editDetailLists[i].beginTime > $scope.editDetailLists[i].endTime ) {
                     cjhmeModal.error({content: "请检查费用发生日期，开始时间不能晚于结束时间",  autoClose: true} );
+                    $("#editReimburseBtn").attr("disabled", false);
                     return;
                 }
             }
@@ -170,6 +173,7 @@ aa.controller('reimburse.reimburseEditCtl', ['$scope', '$state', 'reimburseServi
             $scope.reimburseEditData.reimburseDetails = $scope.editDetailLists;
 
             reimburseService.updateReimburses($scope.reimburseEditData,function () {
+                $("#editReimburseBtn").attr("disabled", false);
                 cjhmeModal.info({content: "更新成功",  autoClose: true},$state.go('main') );
 
             });

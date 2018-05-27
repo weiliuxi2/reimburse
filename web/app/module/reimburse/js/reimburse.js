@@ -70,25 +70,19 @@ aa.controller('reimburse.reimburseAddCtl', ['$scope', '$state', 'reimburseServic
         //保存请求
 
         $scope.saveReq = function () {
+            $("#saveReimburseBtn").attr("disabled", true);
             if ($scope.reimburseDetailLists.length == 0) {
                 cjhmeModal.error({content: "请填写报销明细",  autoClose: true} );
+                $("#saveReimburseBtn").attr("disabled", false);
                 return;
             }
-           /* if ($scope.baseData.endTime < $scope.baseData.beginTime) {
-                cjhmeModal.error({content: "结束时间不能晚于开始时间",  autoClose: true} );
-                return;
-            }*/
+
             $scope.reimburseData.reimburseBase = $scope.baseData;
-            // $scope.reimburseData.reimburseBase.bigTypeId = $scope.baseData.bigType.id;
             $scope.reimburseData.reimburseBase.departmentId = $scope.user.departmentId;
-
-            // $scope.reimburseData.reimburseBase.projectBianHao = $scope.baseData.project.bianHao;
-            // $scope.reimburseData.reimburseBase.projectName = $scope.baseData.project.name;
-            //$scope.reimburseData.reimburseBase.prop('bigType');
-
             for (var i = 0; i < $scope.reimburseDetailLists.length; i ++) {
                 if ( $scope.reimburseDetailLists[i].beginTime > $scope.reimburseDetailLists[i].endTime ) {
                     cjhmeModal.error({content: "请检查费用发生日期，开始时间不能晚于结束时间",  autoClose: true} );
+                    $("#saveReimburseBtn").attr("disabled", false);
                     return;
                 }
             }
@@ -103,6 +97,7 @@ aa.controller('reimburse.reimburseAddCtl', ['$scope', '$state', 'reimburseServic
             $scope.reimburseData.reimburseDetails = $scope.reimburseDetailLists;
             console.log($scope.reimburseData);
             reimburseService.saveReimburses($scope.reimburseData,function () {
+                $("#saveReimburseBtn").attr("disabled", false);
                 cjhmeModal.info({content: "保存成功",  autoClose: true},$state.go('main') );
 
             });
