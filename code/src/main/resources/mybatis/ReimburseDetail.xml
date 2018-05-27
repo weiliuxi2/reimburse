@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.wlx.reimburse.dao.ReimburseDetailDAO">  
+
+	<resultMap type="com.wlx.reimburse.model.ReimburseDetailVO" id="ReimburseDetailMap">  
+	   <id column="id" property="id" />  
+	   <result column="begin_time" property="beginTime" />  
+	   <result column="end_time" property="endTime" />  
+	   <result column="type_id" property="typeId" />  
+	   <result column="type_name" property="typeName" />  
+	   <result column="project_bianHao" property="projectBianHao" />  
+	   <result column="project_name" property="projectName" />  
+	   <result column="money" property="money" /> 
+	   
+	   <result column="dan_hao" property="danHao" />  
+	
+	   <result column="description" property="description" />  
+	   <result column="create_time" property="createTime" />  
+	   <result column="update_time" property="updateTime" /> 
+	    
+	</resultMap>  
+
+	<select id="query" resultMap="ReimburseDetailMap" >
+		SELECT t.* FROM reimburse_detail t ORDER BY t.create_time DESC;  
+	</select>  
+	
+	<select id="queryPaging" resultMap="ReimburseDetailMap" parameterType="com.wlx.reimburse.model.ReimburseDetailVO">
+		SELECT * FROM  reimburse_detail ORDER BY update_time DESC 
+			limit ((#{pageNo} -1) * #{pageSize}), #{pageSize} 
+	</select> 
+	
+	<insert id="save" parameterType="com.wlx.reimburse.model.ReimburseDetailVO" useGeneratedKeys="true" keyProperty="id">
+	    INSERT INTO reimburse_detail (id,begin_time,end_time,type_id,type_name,project_bianHao,project_name,money,dan_hao,
+	  	  description,create_time,update_time) VALUES 
+	  	  (#{id},#{beginTime},#{endTime},#{typeId},#{typeName},#{projectBianHao},#{projectName},#{money},#{danHao},#{description},
+	  	  #{createTime},#{updateTime})
+	</insert> 
+	
+	<insert id="saves" parameterType="list" >
+	    INSERT INTO reimburse_detail (begin_time,end_time,type_id,type_name,project_bianHao,project_name,money,dan_hao,
+	  	  description,create_time,update_time) VALUES 
+	  	  <foreach collection="list" item="item" separator=",">  
+            (#{item.beginTime},#{item.endTime},#{item.typeId},#{item.typeName},#{item.projectBianHao},#{item.projectName},#{item.money},#{item.danHao},
+            #{item.description},#{item.createTime},#{item.updateTime})
+        </foreach> 
+	  	   
+	</insert> 
+	
+	<insert id="update" parameterType="com.wlx.reimburse.model.ReimburseDetailVO">
+	    UPDATE reimburse_detail SET name = #{name}, description = #{description} WHERE id = #{id}
+	</insert>
+	
+	<delete id="deleteByVO" parameterType="com.wlx.reimburse.model.ReimburseDetailVO">
+	   	DELETE a FROM reimburse_detail a WHERE 1 = 1
+	   	<if test="id != 0"> and a.id = #{id}</if>
+	   	<if test="danHao != 0"> and a.dan_hao = #{danHao}</if>
+	</delete>
+	
+	<select id="getByVO" parameterType="com.wlx.reimburse.model.ReimburseDetailVO" resultMap="ReimburseDetailMap">
+	   	SELECT a.*  from reimburse_detail a where 1 = 1 
+	   	<if test="id != 0"> and a.id = #{id}</if>
+	   	<if test="danHao != 0"> and a.dan_hao = #{danHao}</if>
+	   	
+	</select>
+	
+		<delete id="delete" parameterType="int">
+	   	DELETE FROM reimburse_detail WHERE id = #{id} 
+	</delete>
+
+</mapper>

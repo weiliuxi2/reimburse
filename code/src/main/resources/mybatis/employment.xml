@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.wlx.reimburse.dao.EmploymentDAO">  
+
+	<resultMap type="com.wlx.reimburse.model.EmploymentVO" id="EmploymentMap">  
+	   <id column="id" property="id" />  
+	   <result column="name" property="name" />  
+	   <result column="description" property="description" />  
+	   <result column="create_time" property="createTime" />  
+	   <result column="update_time" property="updateTime" /> 
+	   
+	    <result column="password" property="password" />  
+	   <result column="sex" property="sex" />  
+	   <result column="age" property="age" />  
+	   <result column="telephone" property="telephone" /> 
+	   
+	    <result column="address" property="address" />  
+	   <result column="employment_id" property="employmentId" />  
+	   <result column="department_id" property="departmentId" />  
+	   <result column="type" property="type" />  
+	   <result column="permission" property="permission" />  
+	   <result column="departmentName" property="departmentName" /> 
+	</resultMap>  
+
+	<select id="query" resultMap="EmploymentMap" >
+		SELECT t.*,d.name as departmentName FROM Employment t,department d where t.department_id = d.id
+		AND t.name != 'superadmin' 
+		 ORDER BY t.create_time DESC;  
+	</select>  
+	
+	<select id="queryByVO" resultMap="EmploymentMap" parameterType="com.wlx.reimburse.model.EmploymentVO">
+		SELECT t.*,d.name as departmentName FROM Employment t,department d where t.department_id = d.id  
+		<if test="name != null and name != '' ">
+			AND t.name = #{name}
+		</if>
+		<if test="password != null and password != '' ">
+			AND t.password = #{password}
+		</if>
+		 ORDER BY t.create_time DESC;  
+	</select>  
+	
+	<select id="queryOneByVO" resultMap="EmploymentMap" parameterType="com.wlx.reimburse.model.EmploymentVO">
+		SELECT t.*,d.name as departmentName FROM Employment t,department d where t.department_id = d.id  
+		<if test="id != 0 ">
+			AND t.id = #{id}
+		</if>
+		<if test="name != null and name != '' ">
+			AND t.name = #{name}
+		</if>
+		<if test="password != null and password != '' ">
+			AND t.password = #{password}
+		</if>
+	</select> 
+	
+	<select id="queryPaging" resultMap="EmploymentMap" parameterType="com.wlx.reimburse.model.EmploymentVO">
+		SELECT * FROM  Employment ORDER BY update_time DESC 
+			limit ((#{pageNo} -1) * #{pageSize}), #{pageSize} 
+	</select> 
+	
+	<insert id="save" parameterType="com.wlx.reimburse.model.EmploymentVO" useGeneratedKeys="true" keyProperty="id">
+	    INSERT INTO Employment (id,name,description,create_time,update_time,password,sex,age,
+	  	  telephone,address,employment_id,department_id,type,permission) VALUES 
+	  	  (#{id},#{name},#{description},#{createTime},#{updateTime},#{password},#{sex},#{age},#{telephone},#{address},#{employmentId},
+	  	  #{departmentId},#{type},#{permission})   
+	</insert> 
+	
+	<insert id="update" parameterType="com.wlx.reimburse.model.EmploymentVO">
+
+	    UPDATE Employment  
+	    <trim prefix="SET" suffixOverrides=",">
+	    <if test="password !=null and password != '' "> password = #{password},</if>
+	    <if test="telephone !=null and telephone != ''"> telephone = #{telephone},</if>
+	    <if test="address !=null and address != '' "> address = #{address},</if>
+	     <if test="description !=null and description != '' "> description = #{description},</if>
+	         <if test="name !=null and name != '' "> address = #{address},</if>
+	    <if test="employmentId !=null and employmentId != '' "> employment_id = #{employmentId},</if>
+	    <if test="departmentId !=0 "> department_id = #{departmentId},</if>
+	    <if test="type !=0 "> type = #{type},</if>
+	    <if test="permission !=0 "> permission = #{permission},</if>
+	    <if test="updateTime !=null "> update_time = #{updateTime},</if>
+	    </trim>
+	     WHERE id = #{id}
+	     
+	</insert>
+	
+	<delete id="delete" parameterType="int">
+	   	DELETE FROM Employment WHERE id = #{id} 
+	</delete>
+
+</mapper>

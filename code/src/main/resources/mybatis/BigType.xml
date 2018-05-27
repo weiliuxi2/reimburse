@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.wlx.reimburse.dao.BigTypeDAO">  
+
+	<resultMap type="com.wlx.reimburse.model.BigTypeVO" id="bigTypeMap">  
+	   <id column="id" property="id" />  
+	   <result column="name" property="name" />  
+	   <result column="description" property="description" />  
+	   <result column="create_time" property="createTime" />  
+	   <result column="update_time" property="updateTime" />  
+	</resultMap>  
+
+	<select id="query" resultMap="bigTypeMap" >
+		SELECT t.* FROM type_big t ORDER BY t.create_time DESC
+	</select>  
+	
+	<select id="queryPaging" resultMap="bigTypeMap" parameterType="com.wlx.reimburse.model.BigTypeVO">
+		SELECT * FROM  type_big ORDER BY update_time DESC 
+			limit ((#{pageNo} -1) * #{pageSize}), #{pageSize} 
+	</select> 
+	
+	<insert id="save" parameterType="com.wlx.reimburse.model.BigTypeVO" useGeneratedKeys="true" keyProperty="id">
+	    INSERT INTO type_big (id,name,description,create_time,update_time) VALUES (#{id},#{name},#{description},#{createTime},#{updateTime})   
+	</insert> 
+	
+	<insert id="update" parameterType="com.wlx.reimburse.model.BigTypeVO">
+	    UPDATE type_big SET name = #{name}, description = #{description} WHERE id = #{id}
+	</insert>
+	
+	<delete id="delete" parameterType="int">
+	   	DELETE FROM type_big WHERE id = #{id} 
+	</delete>
+
+</mapper>

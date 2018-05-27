@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.wlx.reimburse.dao.ReimburseBaseDAO">  
+
+	<resultMap type="com.wlx.reimburse.model.ReimburseBaseVO" id="ReimburseBaseMap">  
+	   <id column="id" property="id" />  
+	   <result column="employmentName" property="employmentName" />  
+	   <result column="departmentId" property="departmentId" /> 
+	   
+
+	   <result column="total" property="total" />  
+	
+	   <result column="description" property="description" />  
+	   <result column="create_time" property="createTime" />  
+	   <result column="update_time" property="updateTime" /> 
+	   
+	    <result column="dan_hao" property="danHao" /> 
+	     <result column="status" property="status" /> 
+
+	     <result column="departmentName" property="departmentName" />
+	      <result column="name" property="name" />
+
+	</resultMap>  
+
+	<select id="query" resultMap="ReimburseBaseMap" >
+		SELECT t.* FROM Reimburse_base t ORDER BY t.create_time DESC;  
+	</select>  
+	
+	<select id="queryPaging" resultMap="ReimburseBaseMap" parameterType="com.wlx.reimburse.model.ReimburseBaseVO">
+		SELECT * FROM  Reimburse_base ORDER BY create_time DESC 
+			limit ((#{pageNo} -1) * #{pageSize}), #{pageSize} 
+	</select> 
+	
+	<insert id="save" parameterType="com.wlx.reimburse.model.ReimburseBaseVO" useGeneratedKeys="true" keyProperty="id">
+	    INSERT INTO Reimburse_base (id,employmentName,departmentId,total,name,create_time,update_time,
+	    dan_hao,status,departmentName) 
+	    VALUES (#{id},#{employmentName},#{departmentId},#{total},#{name},
+	  	  #{createTime},#{updateTime},#{danHao},#{status},#{departmentName})
+	</insert> 
+	
+	<insert id="update" parameterType="com.wlx.reimburse.model.ReimburseBaseVO">
+	    UPDATE Reimburse_base  
+	    <trim prefix="SET" suffixOverrides=",">
+	    <if test="total != 0 and total !=null and total != ''"> total = #{total},</if>
+	    <if test="description !=null and description != '' "> description = #{description},</if>
+	    <if test="updateTime !=null "> update_time = #{updateTime},</if>
+	    <if test="status != 0 and status !=null and status != '' "> status = #{status},</if>
+	    <if test="name !=null and name != '' "> name = #{name},</if>
+	    </trim>
+	     WHERE id = #{id}
+	</insert>
+	
+	<delete id="deleteByVO" parameterType="com.wlx.reimburse.model.ReimburseBaseVO">
+	   	DELETE a FROM reimburse_base a WHERE 1 = 1
+	   	<if test="id != 0"> and a.id = #{id}</if>
+	   	<if test="danHao != 0"> and a.dan_hao = #{danHao}</if>
+	</delete>
+	
+	<select id="getByVO" parameterType="com.wlx.reimburse.model.ReimburseBaseVO" resultMap="ReimburseBaseMap">
+	   	select a.* FROM reimburse_base a WHERE 1 = 1
+	   	<if test="id != 0"> and a.id = #{id}</if>
+	   	<if test="danHao != null and danHao != ''"> and a.dan_hao = #{danHao}</if>
+	   	<if test="employmentName != null and employmentName != '' and employmentName != 'superadmin'"> and a.employmentName = #{employmentName}</if>
+	   	<if test="departmentId != 0"> and a.departmentId = #{departmentId} and a.status != '1'</if>
+	   		<if test="employmentName == 'superadmin'"> and a.status != '1'</if>
+	   	order by a.create_time desc
+	   	limit #{pageNo}, #{pageSize} 
+	</select>
+	
+	<select id="getSizeByVO" parameterType="com.wlx.reimburse.model.ReimburseBaseVO" resultType="int">
+	   	select count(*) FROM reimburse_base a WHERE 1 = 1
+	   	<if test="id != 0"> and a.id = #{id}</if>
+	   	<if test="danHao != null and danHao != ''"> and a.dan_hao = #{danHao}</if>
+	   	<if test="employmentName != null and employmentName != '' and employmentName != 'superadmin'"> and a.employmentName = #{employmentName}</if>
+	   	<if test="departmentId != 0"> and a.departmentId = #{departmentId} and a.status != '1'</if>
+	   		<if test="employmentName == 'superadmin'"> and a.status != '1'</if>
+	   
+	</select>
+	
+		<delete id="delete" parameterType="int">
+	   	DELETE FROM reimburse_base WHERE id = #{id} 
+	</delete>
+
+
+</mapper>
